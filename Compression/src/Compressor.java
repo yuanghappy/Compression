@@ -26,13 +26,13 @@ public class Compressor {
 		}
 	}
 	
-	public void PrintFrequencyMao(){
+	public void PrintFrequencyMap(){
 		System.out.println(FrequencyMap.entrySet());
 	}
 	
 	public static void main(String[] args){
 		Compressor comp = new Compressor();
 		comp.CalculateFrequency("testfile");
-		comp.PrintFrequencyMao();
+		comp.PrintFrequencyMap();
 	}
 }
