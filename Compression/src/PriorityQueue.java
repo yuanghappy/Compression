@@ -93,7 +93,6 @@ class PriorityQueue<T> {
 		for(int i = 0; i < 20; i++){
 			q.add("test", new Random().nextInt(100));
 		}
-		q.remove("test");
 		q.print();
 		
 	}
