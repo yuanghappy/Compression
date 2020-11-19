@@ -3,10 +3,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
 
 public class Compressor {
 
 	Map<Character, Integer> FrequencyMap;
+	PriorityQueue<Character> q = new PriorityQueue<Character>();
 	
 	public void CalculateFrequency(String path){
 		FrequencyMap = new HashMap<Character, Integer>(); 
@@ -30,9 +33,24 @@ public class Compressor {
 		System.out.println(FrequencyMap.entrySet());
 	}
 	
+	public void AddtoPriorityQueue(){
+		
+		for (Entry<Character, Integer> entry : FrequencyMap.entrySet()){
+			q.add(entry.getKey(), entry.getValue());
+		}
+	}
+	
+	public void PrintPriorityQueue(){
+		q.print();
+	}
+	
 	public static void main(String[] args){
 		Compressor comp = new Compressor();
 		comp.CalculateFrequency("testfile");
+		comp.AddtoPriorityQueue();
 		comp.PrintFrequencyMap();
+		comp.PrintPriorityQueue();
+		
+		
 	}
 }

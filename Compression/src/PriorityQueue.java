@@ -8,65 +8,56 @@ class PriorityQueue<T> {
 	
 	ArrayList<Node> Queue = new ArrayList<Node>();
 	
-	private class Node {
-		
-		private T info;
-		private int frequency;
-		
-		public Node(T info, int frequency) {
-			this.info = info;
-			this.frequency = frequency;
-		}
-	}
 	
-	public boolean add(T info, int frequency){
+	public boolean add(T info, int priority){
 		//1
 		if(Queue.size() == 0){
-			Queue.add(new Node(info, frequency));
+			Queue.add(new Node(info, priority));
 			System.out.println("Mode 1");
 			return true;
 		}
 		//2
-		else if (Queue.get(Queue.size()-1).frequency <= frequency){
-			Queue.add(new Node(info, frequency));
+		else if (Queue.get(Queue.size()-1).priority <= priority){
+			Queue.add(new Node(info, priority));
 			System.out.println("Mode 2");
 			return true;
 		}
 		//3
-		else if (Queue.get(0).frequency >= frequency){
-			Queue.add(0, new Node(info, frequency));
+		else if (Queue.get(0).priority >= priority){
+			Queue.add(0, new Node(info, priority));
 			System.out.println("Mode 3");
 			return true;
 		}
 		//7
 		else if (Queue.size() == 2){
-			Queue.add(1, new Node(info, frequency));
+			Queue.add(1, new Node(info, priority));
 			System.out.println("7");
 			return true;
 		}
 		startindex = 0;
 		endindex = Queue.size()-1;
+		
 		while(true){
 			midpoint = (startindex+endindex)/2;
 			System.out.println(midpoint);
 			//4
-			if(Queue.get(midpoint).frequency == frequency || (Queue.get(midpoint-1).frequency < frequency && Queue.get(midpoint+1).frequency > frequency)){
-				if(Queue.get(midpoint).frequency < frequency){
-					Queue.add(midpoint+1, new Node(info, frequency));
+			if(Queue.get(midpoint).priority == priority || (Queue.get(midpoint-1).priority < priority && Queue.get(midpoint+1).priority > priority)){
+				if(Queue.get(midpoint).priority < priority){
+					Queue.add(midpoint+1, new Node(info, priority));
 					System.out.println("Mode 4");
 					return true;
 				}
-				Queue.add(midpoint, new Node(info, frequency));
+				Queue.add(midpoint, new Node(info, priority));
 				System.out.println("Mode 4");
 				return true;
 			}
 			//5
-			else if(Queue.get(midpoint).frequency > frequency){
+			else if(Queue.get(midpoint).priority > priority){
 				endindex = midpoint;
 				System.out.println("Mode 5");
 			}
 			//6
-			else if(Queue.get(midpoint).frequency < frequency){
+			else if(Queue.get(midpoint).priority < priority){
 				startindex = midpoint;
 				System.out.println("Mode 6");
 			}
@@ -82,9 +73,18 @@ class PriorityQueue<T> {
 		return true;
 	}
 	
+	public int size(){
+		return Queue.size();
+	}
+	
+	//removing the node with the smallest priority number
+	public Node<T> pop(){
+		return Queue.remove(0);
+	}
+	
 	public void print(){
 		for(int i = 0; i < Queue.size(); i++){
-			System.out.println(Queue.get(i).frequency);
+			System.out.println(Queue.get(i).info + ", " + Queue.get(i).priority);
 		}
 	}
 	
