@@ -9,7 +9,7 @@ import java.util.Random;
 public class Compressor {
 
 	Map<Character, Integer> FrequencyMap;
-	PriorityQueue<Character> q = new PriorityQueue<Character>();
+	PriorityQueue<Branch> q = new PriorityQueue<Branch>();
 	
 	public void CalculateFrequency(String path){
 		FrequencyMap = new HashMap<Character, Integer>(); 
@@ -36,7 +36,15 @@ public class Compressor {
 	public void AddtoPriorityQueue(){
 		
 		for (Entry<Character, Integer> entry : FrequencyMap.entrySet()){
-			q.add(entry.getKey(), entry.getValue());
+			q.add(new Branch<Character>(entry.getKey()), entry.getValue());
+		}
+	}
+	
+	public void BuildTree(){
+		while(q.size()>1){
+			Node<Branch>branch1 = q.pop();
+			Node<Branch>branch2 = q.pop();
+			q.add(new Branch(branch2.info, branch1.info), branch2.priority+branch1.priority);
 		}
 	}
 	
@@ -49,6 +57,8 @@ public class Compressor {
 		comp.CalculateFrequency("testfile");
 		comp.AddtoPriorityQueue();
 		comp.PrintFrequencyMap();
+		comp.PrintPriorityQueue();
+		comp.BuildTree();
 		comp.PrintPriorityQueue();
 		
 		

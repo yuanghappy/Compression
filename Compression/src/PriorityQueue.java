@@ -88,6 +88,10 @@ class PriorityQueue<T> {
 		}
 	}
 	
+	public Node get(int i){
+		return Queue.get(i);
+	}
+	
 	public static void main (String[] args){
 		PriorityQueue<String> q = new PriorityQueue<String>();
 		for(int i = 0; i < 20; i++){
