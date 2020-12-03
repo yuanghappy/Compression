@@ -9,6 +9,7 @@ import java.util.Random;
 public class Compressor {
 
 	Map<Character, Integer> FrequencyMap;
+	Map<Character, String> CodeMap;
 	PriorityQueue<Branch> q = new PriorityQueue<Branch>();
 	
 	public void CalculateFrequency(String path){
@@ -52,14 +53,35 @@ public class Compressor {
 		q.print();
 	}
 	
+	public boolean Compress(){
+		CodeMap = new HashMap<Character, String>(); 
+		BuildCode((Branch<Character>) q.get(0).info, "");
+
+		
+		return true;
+	}
+	
+	public Boolean BuildCode(Branch<Character> b, String code){
+		
+		if(b.isLeaf){
+			CodeMap.put((Character) b.info, code);
+			return true;
+		}
+		BuildCode(b.leftChild, code + "0");
+		BuildCode(b.rightChild, code + "1");
+		return true;
+	}
+	
 	public static void main(String[] args){
 		Compressor comp = new Compressor();
 		comp.CalculateFrequency("testfile");
 		comp.AddtoPriorityQueue();
 		comp.PrintFrequencyMap();
-		comp.PrintPriorityQueue();
 		comp.BuildTree();
 		comp.PrintPriorityQueue();
+		comp.Compress();
+		comp.PrintFrequencyMap();
+		System.out.println(comp.CodeMap.toString());
 		
 		
 	}
