@@ -1,10 +1,10 @@
 
 public class Branch<T> {
 	
-	Branch leftChild;
-	Branch rightChild;
-	boolean isLeaf;
-	T info;
+	public Branch leftChild;
+	public Branch rightChild;
+	public boolean isLeaf;
+	public T info;
 	//hold information
 	
 	public Branch(Branch firstchild, Branch secondchild){

@@ -4,9 +4,9 @@ import java.util.Random;
 
 class PriorityQueue<T> {
 	
-	int startindex, endindex, midpoint;
+	private int startindex, endindex, midpoint;
 	
-	ArrayList<Node> Queue = new ArrayList<Node>();
+	private ArrayList<Node> Queue = new ArrayList<Node>();
 	
 	
 	public boolean add(T info, int priority){

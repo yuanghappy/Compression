@@ -1,5 +1,9 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,11 +12,11 @@ import java.util.Random;
 
 public class Compressor {
 
-	Map<Character, Integer> FrequencyMap;
-	Map<Character, String> CodeMap;
-	PriorityQueue<Branch> q = new PriorityQueue<Branch>();
+	private Map<Character, Integer> FrequencyMap;
+	private Map<Character, String> CodeMap;
+	private PriorityQueue<Branch> q = new PriorityQueue<Branch>();
 	
-	public void CalculateFrequency(String path){
+	private void CalculateFrequency(String path){
 		FrequencyMap = new HashMap<Character, Integer>(); 
 		try {
 			FileReader reader = new FileReader(path);
@@ -24,24 +28,25 @@ public class Compressor {
 					FrequencyMap.put((char)c, 1);
 				}
 			}
+			reader.close();
 		} catch (IOException e) {
 			System.out.print("file not found");
 			e.printStackTrace();
 		}
 	}
 	
-	public void PrintFrequencyMap(){
+	private void PrintFrequencyMap(){
 		System.out.println(FrequencyMap.entrySet());
 	}
 	
-	public void AddtoPriorityQueue(){
+	private void AddtoPriorityQueue(){
 		
 		for (Entry<Character, Integer> entry : FrequencyMap.entrySet()){
 			q.add(new Branch<Character>(entry.getKey()), entry.getValue());
 		}
 	}
 	
-	public void BuildTree(){
+	private void BuildTree(){
 		while(q.size()>1){
 			Node<Branch>branch1 = q.pop();
 			Node<Branch>branch2 = q.pop();
@@ -49,20 +54,53 @@ public class Compressor {
 		}
 	}
 	
-	public void PrintPriorityQueue(){
+	private void PrintPriorityQueue(){
 		q.print();
 	}
 	
-	public boolean Compress(){
+	private boolean Compress(String path) throws FileNotFoundException{
 		CodeMap = new HashMap<Character, String>(); 
 		BuildCode((Branch<Character>) q.get(0).info, "");
-
+		String charactercode;
+			BufferedBitWriter bbw = new BufferedBitWriter(path+"comp");
+		try {
+			FileReader reader = new FileReader(path);
+			int c;
+			while((c = reader.read()) != -1){
+				charactercode = CodeMap.get((char)c);
+				for(int i = 0; i < charactercode.length(); i++){
+					if(charactercode.charAt(i) == '0' ){
+						bbw.writeBit(false);
+					}else{
+						bbw.writeBit(true);
+					}
+				}
+			}
+			bbw.close();
+		} catch (IOException e) {
+			System.out.print("file not found");
+			e.printStackTrace();
+		}
+		
+		File codefile = new File(path + "code");
+    	try {
+    		 BufferedWriter writer = new BufferedWriter(new FileWriter(path + "code"));
+    		 for (Entry<Character, String> entry : CodeMap.entrySet()){
+ 					writer.write(entry.getKey());
+    				writer.newLine();
+    				writer.write(entry.getValue());
+    				writer.newLine();
+    			}
+    		 writer.close();
+    	    } catch (IOException a) {
+    	      System.out.println("An error occurred.");
+    	      a.printStackTrace();
+    	    }
 		
 		return true;
 	}
 	
-	public Boolean BuildCode(Branch<Character> b, String code){
-		
+	private Boolean BuildCode(Branch<Character> b, String code){
 		if(b.isLeaf){
 			CodeMap.put((Character) b.info, code);
 			return true;
@@ -72,17 +110,44 @@ public class Compressor {
 		return true;
 	}
 	
-	public static void main(String[] args){
+	//method available to users
+	public boolean CompressFile(String path) throws FileNotFoundException{
+		CalculateFrequency(path);
+		AddtoPriorityQueue();
+		PrintFrequencyMap();
+		BuildTree();
+		PrintPriorityQueue();
+		Compress(path);
+		PrintFrequencyMap();
+		System.out.println(CodeMap.toString());
+		
+		return true;
+	}
+	
+	//method available to users
+	public boolean DecompressFile(String CompFilePath, String CodeFilePath) throws IOException{
+		BufferedReader in = new BufferedReader(new FileReader(CodeFilePath));
+		Map<String, String> ReverseCodeMap = new HashMap<String, String>(); 
+		String CodeLine;
+		while((CodeLine = in.readLine()) != null){
+			if(CodeLine.length() != 0){
+				ReverseCodeMap.put(in.readLine(), CodeLine);
+			}else{
+				in.readLine();
+				ReverseCodeMap.put(in.readLine(), "\n");
+			}
+		}
+		in.close();
+		System.out.println("dec:");
+		System.out.println(ReverseCodeMap.toString());
+		
+		
+		return true;
+	}
+	
+	public static void main(String[] args) throws IOException{
 		Compressor comp = new Compressor();
-		comp.CalculateFrequency("testfile");
-		comp.AddtoPriorityQueue();
-		comp.PrintFrequencyMap();
-		comp.BuildTree();
-		comp.PrintPriorityQueue();
-		comp.Compress();
-		comp.PrintFrequencyMap();
-		System.out.println(comp.CodeMap.toString());
-		
-		
+		comp.CompressFile("testfile");
+		comp.DecompressFile("testfilecomp", "testfilecode");
 	}
 }
