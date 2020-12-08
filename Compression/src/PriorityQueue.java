@@ -13,25 +13,21 @@ class PriorityQueue<T> {
 		//1
 		if(Queue.size() == 0){
 			Queue.add(new Node(info, priority));
-			System.out.println("Mode 1");
 			return true;
 		}
 		//2
 		else if (Queue.get(Queue.size()-1).priority <= priority){
 			Queue.add(new Node(info, priority));
-			System.out.println("Mode 2");
 			return true;
 		}
 		//3
 		else if (Queue.get(0).priority >= priority){
 			Queue.add(0, new Node(info, priority));
-			System.out.println("Mode 3");
 			return true;
 		}
 		//7
 		else if (Queue.size() == 2){
 			Queue.add(1, new Node(info, priority));
-			System.out.println("7");
 			return true;
 		}
 		startindex = 0;
@@ -39,27 +35,22 @@ class PriorityQueue<T> {
 		
 		while(true){
 			midpoint = (startindex+endindex)/2;
-			System.out.println(midpoint);
 			//4
 			if(Queue.get(midpoint).priority == priority || (Queue.get(midpoint-1).priority < priority && Queue.get(midpoint+1).priority > priority)){
 				if(Queue.get(midpoint).priority < priority){
 					Queue.add(midpoint+1, new Node(info, priority));
-					System.out.println("Mode 4");
 					return true;
 				}
 				Queue.add(midpoint, new Node(info, priority));
-				System.out.println("Mode 4");
 				return true;
 			}
 			//5
 			else if(Queue.get(midpoint).priority > priority){
 				endindex = midpoint;
-				System.out.println("Mode 5");
 			}
 			//6
 			else if(Queue.get(midpoint).priority < priority){
 				startindex = midpoint;
-				System.out.println("Mode 6");
 			}
 		}
 	}
