@@ -84,7 +84,7 @@ public class Compressor {
 		
 		File codefile = new File(path + "code");
     	try {
-    		 BufferedWriter writer = new BufferedWriter(new FileWriter(path + "code"));
+    		 BufferedWriter writer = new BufferedWriter(new FileWriter(codefile));
     		 for (Entry<Character, String> entry : CodeMap.entrySet()){
  					writer.write(entry.getKey());
     				writer.newLine();
@@ -126,6 +126,7 @@ public class Compressor {
 	
 	//method available to users
 	public boolean DecompressFile(String CompFilePath, String CodeFilePath) throws IOException{
+		//use stored compression code to construct a reverse code map
 		BufferedReader in = new BufferedReader(new FileReader(CodeFilePath));
 		Map<String, String> ReverseCodeMap = new HashMap<String, String>(); 
 		String CodeLine;
@@ -138,6 +139,31 @@ public class Compressor {
 			}
 		}
 		in.close();
+		//read bits from the compressed file, compare that to reverse code map, and write
+		//char to decompressed file
+		File DecompressedFile = new File(CompFilePath + "Decomp");
+    	try {
+    		 BufferedWriter writer = new BufferedWriter(new FileWriter(DecompressedFile));
+    		 BufferedBitReader bitreader = new BufferedBitReader(CompFilePath);
+    		 String readbitstring = "";
+    		 while(bitreader.hasNext()){
+    			 if(bitreader.readBit()==true){
+    				 readbitstring += "1";
+    			 }else{
+    				 readbitstring += "0";
+    			 }
+    			 System.out.println(readbitstring);
+    			 if (ReverseCodeMap.containsKey(readbitstring)){
+    				 writer.write(ReverseCodeMap.get(readbitstring));
+    				 readbitstring = "";
+    			 }
+    		 }
+    		 writer.close();
+    	    } catch (IOException a) {
+    	      System.out.println("An error occurred.");
+    	      a.printStackTrace();
+    	    }
+		
 		System.out.println("dec:");
 		System.out.println(ReverseCodeMap.toString());
 		
